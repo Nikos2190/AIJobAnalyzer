@@ -1,16 +1,37 @@
-# This is a sample Python script.
+from openai import OpenAI
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+def job():
 
+    job_text = []
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+    while True:
+        job_description = input("Enter job descriptions with enter and "
+                                "finish with typing end: ")
+        job_description = job_description.strip()
+        while job_description == "" :
+            print('Give a job description please')
+            job_description = input("Enter job descriptions with enter and "
+                                    "finish with typing end: ")
+            job_description = job_description.strip()
 
+        if job_description.lower() == 'end':
+            break
+        job_text.append(job_description)
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+    job_text  = '\n'.join(job_text)
+    return job_text
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+work = job()
+client = OpenAI()
+response =  client.responses.create(model = 'gpt-6-luna',
+                                    instructions = ( "Analyze the provided job description and "
+                                                     "identify the job title, "
+    "main responsibilities, required skills, and required qualifications. "
+    "Present the result clearly and concisely."),
+                                    input = work,
+                                    max_output_tokens = 600,
+                                    reasoning = {'effort': 'none'},
+                                    temperature = 0.2)
+
+answer = response.output_text
+print(answer)
